@@ -1,0 +1,163 @@
+	//modules
+var server = require('http');
+var url = require('url');
+var mongoose = require('mongoose');
+var qs = require('querystring');
+//custom modules
+var db = require('./db.js');
+var encrypt = require('./encrypt.js');
+//variables
+var port = 9000;
+// var for checkuser
+var data;
+exports.data = data = '';
+var toHash;
+exports.toHash = toHash = '';
+
+function route(handle,fullurl,response){
+	var pathname = url.parse(fullurl).pathname;
+	console.log('page requested' + pathname);
+	var arguments = parseURL(fullurl);
+	
+	/*
+	if ( typeof handle[pathname] === "function" && pathname == '/login')
+		{
+			return handle[pathname](fullurl);
+		}else if(typeof handle[pathname] === "function" && pathname == '/adduser'){
+			return handle[pathname](fullurl);
+		}else{
+			console.log("No actions defined to process the URL!");
+			return 'Error 404 not found';
+		}
+	*/
+	
+	switch (pathname){
+		case '/login':
+			return handle[pathname](fullurl);
+		case '/adduser':
+			return handle[pathname](arguments.login,arguments.password,response);
+		case '/getuser':
+			
+			return handle[pathname](arguments.login,response);
+		case '/checkuser':
+			return handle[pathname](arguments,response);
+			
+		default: 
+			
+			console.log("No actions defined to process the URL!");
+			response.writeHead(200,
+				{
+					'Content-type': "text/html",
+					'Access-Control-Allow-Origin' : '*',
+					//"Content-Length": content.length
+				}
+			);
+		
+			//console.log(content);
+			response.write('Error 404 not found');
+			response.end();
+			
+	}
+}
+
+//Associate handlers to urls
+var handle = {};
+handle["/login"] = printURL;
+handle["/adduser"] = db.addUser;
+handle["/getuser"] = db.getUser;
+handle["/checkuser"] = checkuser;
+//Handlers
+function printURL(fullurl){
+	//var data = url.parse(fullurl).querystring['login'] + '\n' + url.parse(fullurl).querystring['password'];
+	//catch the value of an arg in the url qs.parse(url.parse(fullurl).query).login
+	var data = qs.parse(url.parse(fullurl).query).login + ' ' +qs.parse(url.parse(fullurl).query).password;
+	return data;
+}
+//url parser
+function parseURL(urltoparse){
+var query = url.parse(urltoparse).query;
+	if (query != ''){
+	var arguments = qs.parse(query);
+	console.log(arguments);
+		//Return a JSON object with arguments
+		return arguments;
+	}else return {};
+	
+}
+//checkuser
+function checkuser(arguments,response){
+		
+		toHash = arguments.password;
+		
+		db.getUser(arguments.login);
+		console.log('toHash: ' + toHash);
+		db.eventDb.on('user_data',function(res){
+			
+			if(res != null){
+				data = JSON.parse(res);
+				encrypt.hashPasswd(toHash,encrypt.salt,true);
+			}else{
+				response.writeHead(200,
+						{
+							'Content-type': "text/html",
+							'Access-Control-Allow-Origin' : '*',
+							//"Content-Length": content.length
+						}
+					);
+					response.write('nouser');
+					response.end();
+			}
+			
+			
+			});
+			
+		encrypt.eventC.on('user_hash',function(hash){
+				// DEBUG
+				console.log('hashed: ' + hash);
+				console.log('recup: ' + data["password"]);
+				
+				if(data["password"] == hash){
+					var res = '{"check" : "ok"}';
+					response.writeHead(200,
+						{
+							'Content-type': "text/html",
+							'Access-Control-Allow-Origin' : '*',
+							//"Content-Length": content.length
+						}
+					);
+					response.write(res);
+					response.end();
+				}else{
+					var res = '{"check" : "ko"}';
+					response.writeHead(200,
+						{
+							'Content-type': "text/html",
+							'Access-Control-Allow-Origin' : '*',
+							//"Content-Length": content.length
+						}
+					);
+					response.write(res);
+					response.end();
+				}
+		});
+}
+//Server
+function startServer(port,route,handle){
+
+	function onRequest(request,response){
+		var fullurl = request.url;
+		if(url.parse(fullurl).pathname != '/favicon.ico'){
+			route(handle,fullurl,response);
+		}
+		
+		
+	}	
+	server.createServer(onRequest).listen(port,'localhost',function(){
+		console.log('Server listening on ' + port);
+	});
+	
+}
+
+
+
+startServer(port,route,handle);

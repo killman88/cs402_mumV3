@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>Welcome to the login page</title>
+</head>
+<script type="text/javascript" src="jquery-1.7.2.js"></script>
+<body>
+<h2>Subscribe a user :</h2>
+	<form action="" method="post" id="loginForm">
+		<label for="login">Login<input type="text" name="login" id="login"/></label>
+		<label for="password">password<input type="password" name="password" id="password"/></label>
+		<input id="subscribe_button" type="button" value="subscribe"/>
+	</form>
+<h2>Test to login :</h2>
+<input type="text" id="user_field" name="user_field" /><input type="button" value="find it!" id="find_user"/>
+<div id="user_found">
+	<p></p>
+</div>
+</body>
+
+</body>
+</html>
+<script type="text/javascript">
+	$("#subscribe_button").on("click",function(){
+		$.ajax({
+			type: "GET",
+			url: "http://localhost:9000/adduser",
+			data: {login: login.value, password: password.value},
+			error: function(){
+				document.write('<p>An error occured!</p>');
+			},
+			success: function(data){
+				document.write(data);
+			}
+		});
+	});
+	$("#find_user").click(function(){
+		$.ajax({
+			type: "GET",
+			url: "http://localhost:9000/getuser?login=" + user_field.value,
+			error: function(){
+				document.write('<p>An error occured!</p>');
+			},
+			success: function(data){
+				//$("#user_found").html(data);
+				//return an array with the json data
+				var parsedData = $.parseJSON(data);
+				
+				var res;
+				for(var key in parsedData){
+					if(parsedData[key] != ''){
+						res += key + ':' + parsedData[key] + '<br />';
+					}
+				}
+				
+				$("#user_found").html(res);
+			}
+			 
+		});
+	});
+</script>

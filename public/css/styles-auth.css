@@ -1,0 +1,61 @@
+body{
+	background-color: #333232;
+	/*background-color:#201c1f;*/	
+}
+/*-------------
+ Header
+ -------------- */
+div.header{
+	border-bottom: solid 4px #00A5FF;
+}
+/*------------
+Login title
+--------------*/
+div.login_title{
+	margin-top: 25%;
+}
+div.login_title h1{
+	font-family: arial,sans-sherif;
+	color: #0bb5d9;
+	font-size: 1.9em;
+	font-weight: bold;
+}
+/*-----------
+Login form
+-------------*/
+
+div.login_form{
+	padding: 10px 10px 10px 0px;
+	min-height: 150px;
+	background-color: white;
+	-moz-border-radius: 31px;
+	-webkit-border-radius: 31px;
+	border-radius: 31px;
+	/*IE 7 AND 8 DO NOT SUPPORT BORDER RADIUS*/
+	-moz-box-shadow: 0px 0px 13px #000000;
+	-webkit-box-shadow: 0px 0px 13px #000000;
+	box-shadow: 0px 0px 13px #000000;
+	/*IE 7 AND 8 DO NOT SUPPORT BLUR PROPERTY OF SHADOWS*/
+
+}
+
+div.login_form{
+	padding-top: 20px;
+}
+
+div.login_form input{
+	float: left;
+	margin: 5px 5px 5px 0px;
+}
+
+div#authForm{
+	padding: 5% 0 0 10%;
+}
+.connect{
+    float: right;
+    margin-right: 10px;
+}
+div.sub-success, div.sub-failed, div.auth-failed{
+    display: none;
+    margin-top: 12%;
+}

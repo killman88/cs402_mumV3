@@ -1,0 +1,33 @@
+var crypto = require('crypto');
+//event listener
+var eventCrypto = require('events');
+var eventC;
+exports.eventC = eventC = new eventCrypto.EventEmitter();
+var salt = 'cs402mum';
+exports.salt = salt;
+function hashPasswd(password,salt,option){
+	if(option){
+		var hash = crypto.createHash('md5').update(password + salt,'utf8').digest('hex');
+	}else{
+		var hash = crypto.createHash('md5').update(password,'utf8').digest('hex');
+	}
+	
+	console.log('Returned hash: ' + hash);
+	eventC.emit('user_hash',hash);
+	return hash;
+}
+
+function hashCompare(hash,hashtobecompared){
+	if (hash != hashtobecompared){
+		console.log('hash does not equal!');
+	}else{
+		console.log('hash does not equal!');
+	} 
+}
+
+//hashPasswd('totoestunhero',salt,true);
+//hashPasswd('totoestunhero',salt,true);
+
+exports.hashPasswd = hashPasswd;
+exports.hashCompare = hashCompare;
+

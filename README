@@ -1,0 +1,29 @@
+###################
+#
+# Starting the app
+#
+###################
+// The server should be listening on 9000
+node ./server.js
+
+####################
+#
+# Useful infos
+#
+####################
+# Features implemented
+- Save in mongoDb an account (login,mdp) whose password is hash in md5, salted.
+- Retrieve informations for a specific user (login, hashed password).
+- Check if a credential (login password) matchs the one in the database.
+
+# files
+The connector used to query the Db is mongoose.
+-- database methods in db.js
+The methods for encryption are :
+-- encrypt.js
+The server file (router, handler)
+-- server.js
+Simple html page to save a user, retrieve infos
+-- login.html
+To test an account use the following request :
+--http://localhost:9000/checkuser?login=user&password=hispassword

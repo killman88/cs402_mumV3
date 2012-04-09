@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var qs = require('querystring');
 var staticServer = require('node-static');
 var sys = require("sys");
+var session = require('./lib/core').session; //session module
 // ReadCertificate synchronously
 var readFileCert = require("fs").readFileSync;
 //custom modules
@@ -13,8 +14,11 @@ var db = require('./db.js');
 var encrypt = require('./encrypt.js');
 var mail = require('./mail.js');
 var fu = require("./js/fu");
+var setsession = require("./js/setsession.js");
 //variables
 var port = 9000;
+var fileChat = new(staticServer.Server)('./chat', { cache: 2 });
+var fileAuth = new(staticServer.Server)('./public', { cache: 2 });
 // var for checkuser
 var data;
 exports.data = data = '';
@@ -37,7 +41,7 @@ function route(handle,fullurl,request,response){
 			
 			return handle[pathname](arguments.login,response);
 		case '/checkuser':
-			return handle[pathname](arguments,response);
+			return handle[pathname](arguments,request,response);
 		case '/mail':
 			return handle[pathname](arguments,response);
 		case '/join':
@@ -49,6 +53,10 @@ function route(handle,fullurl,request,response){
 		case '/recv':
 			return handle[pathname](request,response);
 		case '/send':
+			return handle[pathname](request,response);
+		case '/setsess':
+			return handle[pathname](request,response);
+		case '/logout':
 			return handle[pathname](request,response);
 		default: 
 			
@@ -95,7 +103,8 @@ handle["/join"] = function (request, response) {
     response.simpleJSON(400, {error: "Bad nick."});
     return;
   }
-  var session = createSession(nick);
+
+  var session = createSession(nick); //for the use of the chat
   if (session == null) {
     response.simpleJSON(400, {error: "Nick in use"});
     return;
@@ -159,6 +168,27 @@ handle["/send"] = function (request, response) {
   
   response.simpleJSON(200, { rss: mem.rss });
 };
+
+handle["/setsess"] = function(request,response){
+	request.session.data.user = 'toto';
+	response.writeHead(200,
+				{
+					'Content-type': "text/html",
+					'Access-Control-Allow-Origin' : '*',
+					//"Content-Length": content.length
+				}
+			);
+		
+			//console.log(content);
+			response.write('{"session" : "ok"}');
+			response.end();
+};
+//Logout user
+handle["/logout"] = function(request,response){
+	setsession.unsetUser(request);
+	response.simpleText(200,'User\'s disconnected');
+	
+};
 //Handlers functions
 function printURL(fullurl){
 	//var data = url.parse(fullurl).querystring['login'] + '\n' + url.parse(fullurl).querystring['password'];
@@ -182,7 +212,7 @@ var query = url.parse(urltoparse).query;
 ################################*/
 
 //checkuser
-function checkuser(arguments,response){
+function checkuser(arguments,request,response){
 		
 		toHash = arguments.password;
 		
@@ -215,6 +245,8 @@ function checkuser(arguments,response){
 				console.log('recup: ' + data["password"]);
 				
 				if(data["password"] == hash){
+					//set the session's username
+					setsession.setUser(data["login"],request);
 					var res = '{"check" : "ok"}';
 					response.writeHead(200,
 						{
@@ -388,38 +420,53 @@ function startServer(port,route,handle){
 	//
 	// Create a node-static server instance to serve the './public' folder
 	//
-	var file = new(staticServer.Server)('./chat', { cache: 2 });
+	//var file = new(staticServer.Server)('./chat', { cache: 2 });
+	//var fileChat = new(staticServer.Server)('./chat', { cache: 2 });
+	//var fileAuth = new(staticServer.Server)('./public', { cache: 2 });
+	//Manage incoming requests
 	function onRequest(request,response){
-		var fullurl = request.url;
-	response.simpleText = function (code, body) {
-	      res.writeHead(code, { "Content-Type": "text/plain"
-				  , "Content-Length": body.length
-				  });
-	      response.end(body);
-	};
-	
-	response.simpleJSON = function (code, obj) {
-	      var body = new Buffer(JSON.stringify(obj));
-	      response.writeHead(code, { "Content-Type": "text/json"
-				  , "Content-Length": body.length
-				  });
-	      //write the http response
-	response.end(body);
-	};
+		session(request, response, function(request, response){
+                var fullurl = request.url;
+		response.simpleText = function (code, body) {
+		      response.writeHead(code, { "Content-Type": "text/plain"
+					  , "Content-Length": body.length
+					  });
+		      response.end(body);
+		};
+		
+		response.simpleJSON = function (code, obj) {
+		      var body = new Buffer(JSON.stringify(obj));
+		      response.writeHead(code, { "Content-Type": "text/json"
+					  , "Content-Length": body.length
+					  });
+		//write the http response
+		response.end(body);
+		};
+		
+		//Server static file and manage user's session
+		
+		
 		// Test if ! a query
 		if(url.parse(fullurl).pathname != '/favicon.ico' && url.parse(fullurl).pathname in handle ){
 			route(handle,fullurl,request,response);
 		}else{
 			request.addListener('end', function () {
 			//
-			// Serve files!
-			//
-			file.serve(request, response);
+			// Serve files regarding the user's session
+			// If authentified => chat, else auth
+			if(request.session.data.user == 'Guest'){
+				fileAuth.serve(request, response);
+				console.log('The user is ' + request.session.data.user);
+			}else{
+				fileChat.serve(request, response);
+			}
+			
+						
 			});
 		}
-		
-		
-		
+    
+		});
+              
 		
 	}
 	//--------------------

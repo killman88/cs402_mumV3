@@ -11,7 +11,13 @@ $("#connectButton").on("click",function(){
 	  },
 	  success: function(data){
 	    //  var parsedData = $.parseJSON(data);
-	      $('div.login_resp').html(data.check);
+	    //Think about the transition's login
+	    // $('div.login_resp').html(data.check);
+	      if(data.check == 'ok'){
+		window.setTimeout('location.reload()', 1000);
+	      }else{
+		$('div.auth-failed').show();
+	      }
 	  }
 	  
       });

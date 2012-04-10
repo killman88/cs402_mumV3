@@ -595,12 +595,11 @@ $(document).ready(function() {
         , url: "/mail"
         , data: { sender: to, receiver: from, message: body }
         , error: function () {
-           console.log("error connecting to server");
+           console.log("Failed to send the e-mail!");
            $("#mail-error").css("display","none");
           }
-        , success: function () {
-            console.log("Sent that suckkka");
- 	    $("#mail-success").show();
+        , success: function (data) {
+ 	    if(data.success == 'sent') $("#mail-success").show();
         }
     });
     return false;

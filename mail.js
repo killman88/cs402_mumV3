@@ -5,7 +5,7 @@ function mailSend(data,response){
         from : data.sender
         , to: data.receiver
         , subject: data.subject
-        , text: data.message
+        , html: data.message
     };
     console.log(mailHeader);
     var transport = mailer.createTransport("SMTP", {
@@ -28,10 +28,9 @@ function mailSend(data,response){
 				{
 					'Content-type': "text/html",
 					'Access-Control-Allow-Origin' : '*',
-					//"Content-Length": content.length
 				}
 				);
-    response.write('{success : "sent"}');
+    response.write('{"success" : "sent"}');
     response.end();
    
 }

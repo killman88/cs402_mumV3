@@ -635,9 +635,21 @@ function userDisconnect(userSession){
 		url: '/part',
 		data: {id: userSession},
 		success: function(data){
+				/*
 				$(".header-menu").hide();
 				$(".chatbox, .chat-field").hide();
-				$("#login").show(); 
+				$("#login").show();
+				*/
+				$.ajax({
+				  url: '/logout',
+				  dataType: 'json',
+				  success: function(data){
+				    if(data.session == 'disconnected'){
+				      window.setTimeout('location.reload()', 1000);
+				    }
+				    
+				  }
+				});
 		},
 		dataType: 'json'
 		

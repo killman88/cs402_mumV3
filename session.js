@@ -1,1 +1,0 @@
-var session = require('./lib/core').magicSession();

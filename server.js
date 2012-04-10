@@ -186,7 +186,7 @@ handle["/setsess"] = function(request,response){
 //Logout user
 handle["/logout"] = function(request,response){
 	setsession.unsetUser(request);
-	response.simpleText(200,'User\'s disconnected');
+	response.simpleText(200,'{"session" : "disconnected"}');
 	
 };
 //Handlers functions

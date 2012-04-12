@@ -17,6 +17,11 @@ $(document).ready(function(){
 			  }
 			  
 			},
+			messages: {
+				"subLogin": "Login is required!",
+				"subPassword": "Password is required!",
+				"subMail": "E-mail address required!"
+			},
 			invalidHandler: function(){
 			  //things to be displayed in case of non valid subform
 			  //alert('invalid form');
@@ -31,6 +36,10 @@ $(document).ready(function(){
 				"passwordInput":{
 					"required": true
 				}
+			},
+			messages: {
+				"nickInput": "Enter your login!",
+				"passwordInput": "Enter your password!"
 			}
 		
 		});

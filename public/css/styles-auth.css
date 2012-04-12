@@ -48,6 +48,10 @@ form#login_form input{
 	margin: 5px 5px 5px 0px;
 }
 
+span.auth{
+	display: block;
+}
+
 div#authForm{
 	padding: 5% 0 0 10%;
 }
@@ -55,7 +59,17 @@ div#authForm{
     float: right;
     margin-right: 10px;
 }
+/*-----------
+Sub form
+-------------*/
 div.sub-success, div.sub-failed, div.auth-failed{
     display: none;
     margin-top: 12%;
+}
+/*--------------------------
+Error message on validation
+----------------------------*/
+label.error{
+	color: red;
+	
 }

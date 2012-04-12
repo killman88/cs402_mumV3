@@ -24,7 +24,7 @@ div.login_title h1{
 Login form
 -------------*/
 
-div.login_form{
+form#login_form{
 	padding: 10px 10px 10px 0px;
 	min-height: 150px;
 	background-color: white;
@@ -39,11 +39,11 @@ div.login_form{
 
 }
 
-div.login_form{
+form#login_form{
 	padding-top: 20px;
 }
 
-div.login_form input{
+form#login_form input{
 	float: left;
 	margin: 5px 5px 5px 0px;
 }

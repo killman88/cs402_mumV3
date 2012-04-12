@@ -10,7 +10,7 @@
   <link rel="stylesheet" media="screen" href="css/bootstrap.css" />
   <link rel="stylesheet" media="screen" href="css/bootstrap-responsive.css" />
   <link rel="icon" type="image/ico" href="favicon.ico"/>
-  <!-- Script -->
+  <!-- Script -->	
 
 </head>
 <body>
@@ -24,23 +24,23 @@
 				<div class="login_title">
 					<h1>Please identify to MuM !</h1>
 				</div>
-				<div class="login_form">
+				<form id="login_form">
 					<div id="authForm" class="form-inline">
 						<label for="nickInput">
 						  <span class="auth">Username :</span>
-						  <input id="nickInput" type="text" placeholder="login" class="span2" name="nickInput" />
+						  <input id="nickInput" type="text" placeholder="login" class="span2 required" name="nickInput" />
 						</label>
 						<label for="passwordInput">
 						    <span class="auth">Password :</span>
-						    <input id="passwordInput" type="password" placeholder="password" class="span2" name="passwordInput" />
+						    <input id="passwordInput" type="password" placeholder="password" class="span2 required" name="passwordInput" />
 						</label>
 						<div class="connect">
-						  <input type="button" value="Sign in" id="connectButton" class="btn signIn-button" /><br />
+						  <input type="button" value="Sign in" id="connectButton" class="btn signIn-button required email" /><br />
 						  <a href="#subscribeForm" id="subscribe-link" data-toggle="modal">Subscribe ?</a>
 						</div>
 					<div class="login_resp"></div>
 					</div>
-					
+				</form>
 				<!-- to be displayed if the auth has failed-->
 				<div class="alert alert-error auth-failed">
 				  <p>Authentication failed or user not found!</p>
@@ -60,12 +60,12 @@
 				    <h3>Please choose your credentials</h3>
 				  </div>
 				  <div class="modal-body">
-				    <form class="">
+				    <form id="subForm" class="">
 				      <input type="text" class="span3" id="subLogin" name="subLogin" placeholder="Your login" />
 				      <input type="text" class="span3" id="subPassword" name="subPassword" placeholder="Your password" />
 				      <div class="input-prepend">
 					<span class="add-on">@</span>
-					<input type="text" class="span3" id="subMail" placeholder="e-mail address" value="" />
+					<input type="text" class="span3" id="subMail" placeholder="e-mail address" name="subMail" value="" />
 				      </div>
 				  </form>
 				  </div>
@@ -87,8 +87,9 @@
     <!-- Query for authentification / subscription -->
     <script src="js/connect-auth.js"></script>
     <script src="js/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.js"></script>
     <script type="text/javascript">
-    
+	
     </script>
 </body>
 </html>
